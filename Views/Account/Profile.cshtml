@@ -1,0 +1,48 @@
+﻿@model User
+
+@{
+    ViewBag.Title = "User profile";
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<div class="mt-4">
+    <div class="row align-items-center">
+        <div class="col-md-3 text-center">
+            <img src="@Model.Avatar" class="img-thumbnail avatar-block rounded-circle" alt="User avatar">
+        </div>
+        <div class="col-md-9">
+            <div class="d-flex align-items-center mb-2">
+                <h2 class="me-3">@Model.UserName</h2>
+                @if (ViewBag.CurrentUser == Model.Id)
+                {
+                    <a asp-action="Edit" asp-controller="Account" asp-route-userId="@ViewBag.currentUserId" class="btn btn-outline-secondary">Редактировать</a>
+
+                    <button id="send-message-count-email" class="btn btn-primary">Отправить количество сообщений на email</button>
+                    <a class="btn btn-outline-danger ml-1" asp-controller="Account" asp-action="Logout">Выйти</a>
+                }
+            </div>
+            <h6 class="text-muted">@Model.DateOfBirth.ToString("dd.MM.yyyy")</h6>
+            <h6 class="text-muted">Количество отправленных сообщений @ViewBag.Messages</h6>
+        </div>
+    </div>
+</div>
+
+    <script>
+        $(document).ready(function () {
+            $('#send-message-count-email').on('click', function () {
+                console.log("[DEBUG] Нажата кнопка отправки email с количеством сообщений.");
+                $.ajax({
+                url: '/Account/SendMessageCountEmail',
+                    type: 'POST',
+                    success: function (response) {
+                        console.log("[DEBUG] Ответ сервера:", response);
+                        alert(response.message);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("[DEBUG] Ошибка при отправке email:", status, error);
+                        alert('Произошла ошибка при отправке email: ' + error);
+                    }
+                });
+            });
+        });
+
+    </script>
